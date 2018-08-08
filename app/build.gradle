@@ -13,6 +13,12 @@ android {
     }
     buildTypes {
         release {
+            buildConfigField "boolean", "API_ENV", "true"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            buildConfigField "boolean", "API_ENV", "true"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -22,5 +28,6 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:26.1.0'
-    compile files('libs/ARLibs .jar')
+    // compile files('libs/ARLibs .jar')
+    compile files('libs/ARLTLibs.jar')
 }

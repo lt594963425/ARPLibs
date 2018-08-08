@@ -10,8 +10,5 @@ public class PanicARApp extends PARApplication {
         super.onCreate();
     }
 
-    @Override
-    public String setApiKey() {
-        return "wewewe";
-    }
+
 }
