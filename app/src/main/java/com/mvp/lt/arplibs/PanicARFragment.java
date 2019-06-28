@@ -3,6 +3,8 @@ package com.mvp.lt.arplibs;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +21,7 @@ import com.mvp.lt.arrr.arlib.poi.PARPoiLabel;
 import com.mvp.lt.arrr.arlib.poi.PARPoiLabelAdvanced;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -47,19 +50,16 @@ public class PanicARFragment extends PARFragment {
         label.setBackgroundImageResource(R.drawable.custom_poi_label);
         label.setSize(384, 192);
         PARController.getInstance().addPoi(label);
+        PARController.getInstance().addPoi(createPoi("柳柳", "后端开发", 28.189401, 113.036438));
 
-        PARController.getInstance().addPoi(createPoi("柳柳","后端开发",28.189401,113.036438));
-
-        label = createPoi("Berlin", "Germany", 52.523402, 13.41141, 35.0);
-
-        label.setIconImageViewResource(R.drawable.poi_icon);
-        label.setOffset(new Point(0, 100));
-        PARController.getInstance().addPoi(label);
         PARController.getInstance().addPoi(createPoi("Paris", "France", 48.856614, 2.352222));
         PARController.getInstance().addPoi(createPoi("London", "United Kingdom", 51.507351, -0.127758));
 
+        label = createPoi("Berlin", "Germany", 52.523402, 13.41141, 35.0);
+        label.setIconImageViewResource(R.drawable.poi_icon);
+        label.setOffset(new Point(0, 100));
+        PARController.getInstance().addPoi(label);
         initLabelRepo();
-
     }
 
     @Override
@@ -80,19 +80,19 @@ public class PanicARFragment extends PARFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_add_random_poi:
-                int random = (new Random().nextInt(labelRepo.size()-1)+0);
+                int random = (new Random().nextInt(labelRepo.size() - 1) + 0);
                 PARController.getInstance().addPoi(labelRepo.get(random));
-                Toast.makeText(this.getActivity(),"Added: " + labelRepo.get(random).getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.getActivity(), "Added: " + labelRepo.get(random).getTitle(), Toast.LENGTH_SHORT).show();
                 return super.onOptionsItemSelected(item);
             case R.id.action_add_cardinal_pois:
                 createCDPOIs();
                 return super.onOptionsItemSelected(item);
             case R.id.action_delete_last_poi:
-                if (PARController.getInstance().numberOfObjects() > 0){
-                    int lastObject = PARController.getInstance().numberOfObjects()-1;
-                    Toast.makeText(this.getActivity(),"Removing: " + ((PARPoiLabel) PARController.getInstance().getObject(lastObject)).getTitle(), Toast.LENGTH_SHORT).show();
+                if (PARController.getInstance().numberOfObjects() > 0) {
+                    int lastObject = PARController.getInstance().numberOfObjects() - 1;
+                    Toast.makeText(this.getActivity(), "Removing: " + ((PARPoiLabel) PARController.getInstance().getObject(lastObject)).getTitle(), Toast.LENGTH_SHORT).show();
                     PARController.getInstance().removeObject(lastObject);
                 }
                 return super.onOptionsItemSelected(item);
@@ -115,6 +115,8 @@ public class PanicARFragment extends PARFragment {
     //==============================================================================================
     // Create Label
     //==============================================================================================
+
+
     /**
      * Create a poi with title, description and position
      *
@@ -129,12 +131,17 @@ public class PanicARFragment extends PARFragment {
         poiLocation.setLatitude(lat);
         poiLocation.setLongitude(lon);
 
+
         final PARPoiLabel parPoiLabel = new PARPoiLabel(poiLocation, title, description, R.layout.panicar_poilabel, R.drawable.radar_dot);
 
-        parPoiLabel.setOnClickListener(new View.OnClickListener() {
+        parPoiLabel.setOnClickListener(parPoiLabel,new PARPoiLabel.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), parPoiLabel.getTitle() + " - " + parPoiLabel.getDescription(), Toast.LENGTH_LONG).show();
+            public void onClick(View view,PARPoiLabel parPoiLabel1) {
+
+                PARController.getInstance().removeObject(parPoiLabel1);
+                PARController.getInstance().addPoi(parPoiLabel1);
+
+                Toast.makeText(getActivity(), parPoiLabel1.getTitle() + " - " + parPoiLabel1.getDescription(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -155,13 +162,12 @@ public class PanicARFragment extends PARFragment {
         poiLocation.setLatitude(lat);
         poiLocation.setLongitude(lon);
         poiLocation.setAltitude(alt);
-
         final PARPoiLabelAdvanced parPoiLabel = new PARPoiLabelAdvanced(poiLocation, title, description, R.layout.panicar_poilabel, R.drawable.radar_dot);
         parPoiLabel.setIsAltitudeEnabled(true);
-        parPoiLabel.setOnClickListener(new View.OnClickListener() {
+        parPoiLabel.setOnClickListener(parPoiLabel,new PARPoiLabel.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), parPoiLabel.getTitle() + " - " + parPoiLabel.getDescription(), Toast.LENGTH_LONG).show();
+            public void onClick(View view,PARPoiLabel parPoiLabel1) {
+                Toast.makeText(getActivity(), parPoiLabel1.getTitle() + " - " + parPoiLabel1.getDescription(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -180,7 +186,7 @@ public class PanicARFragment extends PARFragment {
     }
 
     // holds a set of example pois, which are gonna created randomly
-    private void initLabelRepo(){
+    private void initLabelRepo() {
         labelRepo.add(createRepoPoi("Regensburg", "doPanic Headquarter, Germany", 49.01824, 12.0953));
         labelRepo.add(createRepoPoi("Munic", "Germany", 48.1351253, 11.581980599999952));
         labelRepo.add(createRepoPoi("Nuernberg", "Germany", 49.45203, 11.07675));
@@ -216,7 +222,7 @@ public class PanicARFragment extends PARFragment {
     /**
      * adds 4 points in cardinal direction at current location
      */
-    private void createCDPOIs(){
+    private void createCDPOIs() {
 
         double degreeCorrection = 0.1;    // approx 7700 meter
         //double degreeCorrection = 0.01; // approx 1000 meter
@@ -224,9 +230,9 @@ public class PanicARFragment extends PARFragment {
         //double degreeCorrection = 0.0001; // approx 12 meter
         Location currentLocation = PSKDeviceAttitude.sharedDeviceAttitude().getLocation();
 
-        PARController.getInstance().addPoi(createPoi("North", "", currentLocation.getLatitude()+degreeCorrection, currentLocation.getLongitude()));
-        PARController.getInstance().addPoi(createPoi("South", "", currentLocation.getLatitude()-degreeCorrection, currentLocation.getLongitude()));
-        PARController.getInstance().addPoi(createPoi("West", "",  currentLocation.getLatitude(),                  currentLocation.getLongitude()-degreeCorrection));
-        PARController.getInstance().addPoi(createPoi("East", "",  currentLocation.getLatitude(),                  currentLocation.getLongitude()+degreeCorrection));
+        PARController.getInstance().addPoi(createPoi("North", "", currentLocation.getLatitude() + degreeCorrection, currentLocation.getLongitude()));
+        PARController.getInstance().addPoi(createPoi("South", "", currentLocation.getLatitude() - degreeCorrection, currentLocation.getLongitude()));
+        PARController.getInstance().addPoi(createPoi("West", "", currentLocation.getLatitude(), currentLocation.getLongitude() - degreeCorrection));
+        PARController.getInstance().addPoi(createPoi("East", "", currentLocation.getLatitude(), currentLocation.getLongitude() + degreeCorrection));
     }
 }

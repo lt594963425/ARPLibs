@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.mvp.lt.arplibs">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.mvp.lt.arplibs">
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
+
+    <uses-feature android:name="android.hardware.camera"  android:required="false"/>
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"
-                     tools:ignore="MockLocation"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:name=".PanicARApp"
@@ -22,7 +19,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <activity
             android:name=".MainActivity"
@@ -39,7 +37,7 @@
             android:name=".ARLandscapeActivity"
             android:label="Landscape-only AR"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape" >
+            android:screenOrientation="sensorLandscape" >
         </activity>
         <activity
             android:name=".ARPortraitActivity"
@@ -52,6 +50,7 @@
             android:label="Auto-orienting AR"
             android:configChanges="keyboardHidden|orientation|screenSize" >
         </activity>
+        <activity android:name=".CameraSurfaceViewActivity" />
     </application>
 
 </manifest>
